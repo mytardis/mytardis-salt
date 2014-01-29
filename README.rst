@@ -11,9 +11,8 @@ Quickstart:
    :linenos:
 
   wget -O - http://bootstrap.saltstack.org | sudo sh -s -- git develop
-  sudo git clone https://github.com/grischa/mytardis-salt.git /srv
+  sudo git clone https://github.com/mytardis/mytardis-salt.git /srv
   sudo salt-call --local state.highstate
-
 
 Pillars contain the configuration and need to be edited for production use.
 
