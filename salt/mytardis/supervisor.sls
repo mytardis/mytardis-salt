@@ -1,21 +1,25 @@
 {% set mytardis_inst_dir =
         pillar['mytardis_base_dir']~"/"~pillar['mytardis_branch'] %}
 
-{% if grains['os_family'] == 'Debian' %}
-supervisor:
-  pkg.installed: []
+/etc/supervisor/conf.d:
+  file.directory:
+    - makedirs: true
 
 supervisord.conf:
   file.managed:
-{% if grains['os_family'] == 'Debian' %}
     - name: /etc/supervisor/supervisord.conf
-{% else %}
-    - name: /etc/supervisord.conf
-{% endif %}
     - source: salt://mytardis/templates/supervisord.conf
-    - template: jinja
     - require:
+        - file: /etc/supervisor/conf.d
+{% if grains['os_family'] == 'Debian' %}
         - pkg: supervisor
+{% else %}
+        - pip: supervisor
+{% endif %}
+
+{% if grains['os_family'] == 'Debian' %}
+supervisor:
+  pkg.installed: []
 
 supervisor-service-start:
   cmd.run:
@@ -47,7 +51,7 @@ supervisor:
     - require:
         - pkg: python-pip
 
-/etc/init.d/supervisord:
+/etc/init.d/supervisor:
   file.managed:
     - source: salt://mytardis/templates/init-d-supervisord
     - mode: 750
@@ -56,27 +60,19 @@ supervisor:
 
 /etc/sysconfig/supervisord:
   file.managed:
-    - source: salt://templates/sysconfig-supervisord
+    - source: salt://mytardis/templates/sysconfig-supervisord
 
-chkconfig --add supervisord:
+chkconfig --add supervisor:
   cmd.run:
     - require:
         - pip: supervisor
-        - file: /etc/init.d/supervisord
-
-supervisord.conf:
-  file.managed:
-    - name: /etc/supervisord.conf
-    - source: salt://templates/supervisord.conf
-    - template: jinja
-    - require:
-        - pip: supervisor
+        - file: /etc/init.d/supervisor
 
 supervisor-service-start:
   cmd.run:
-    - name: service supervisord restart
+    - name: service supervisor restart
     - require:
-        - file: /etc/supervisord.conf
+        - file: /etc/supervisor/supervisord.conf
         - file: {{ mytardis_inst_dir }}/wsgi.py
         - cmd: supervisorctl stop all
 

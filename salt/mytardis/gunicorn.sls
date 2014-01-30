@@ -48,15 +48,9 @@ tls.create_csr:
 {% endif %}
 
 gunicorn-supervisor:
-  file.accumulated:
-    - name: supervisord
-{% if grains['os_family'] == 'Debian' %}
-    - filename: /etc/supervisor/supervisord.conf
-{% else %}
-    - filename: /etc/supervisord.conf
-{% endif %}
-    - text:
-        - "\n\
+  file.managed:
+    - name: /etc/supervisor/conf.d/gunicorn.conf
+    - contents: "\n\
 [program:gunicorn]\n\
 command={{ mytardis_inst_dir}}/bin/gunicorn\n
  -c {{mytardis_inst_dir}}/gunicorn_settings.py\n
@@ -71,7 +65,7 @@ redirect_stderr=true\n\
     - require:
         - file: {{ socketdir }}
     - require_in:
-        - file: supervisord.conf
+        - cmd: supervisor-service-start
 
 supervisorctl start gunicorn:
   cmd.run:
