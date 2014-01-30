@@ -282,14 +282,9 @@ bin/django loaddata tardis/tardis_portal/fixtures/cc_licenses.json || true:
         - cmd: bootstrap
 
 celery-supervisor:
-  file.accumulated:
-    - name: supervisord
-{% if grains['os_family'] == 'Debian' %}
-    - filename: /etc/supervisor/supervisord.conf
-{% else %}
-    - filename: /etc/supervisord.conf
-{% endif %}
-    - text:
+  file.managed:
+    - name: /etc/supervisor/conf.d/celery.conf
+    - contents:
         - "[program:celeryd]\n\
 directory={{ mytardis_inst_dir }}\n\
 command={{ mytardis_inst_dir}}/bin/django celeryd --concurrency 5\n\
@@ -306,8 +301,9 @@ redirect_stderr=true\n\
 "
     - require:
         - cmd: buildout
-    - require_in:
         - file: supervisord.conf
+    - require_in:
+        - cmd: supervisor-service-start
 
 celeryd:
   supervisord:
