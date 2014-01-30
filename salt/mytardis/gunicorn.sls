@@ -50,8 +50,7 @@ tls.create_csr:
 gunicorn-supervisor:
   file.managed:
     - name: /etc/supervisor/conf.d/gunicorn.conf
-    - contents:
-        - "\n\
+    - contents: "\n\
 [program:gunicorn]\n\
 command={{ mytardis_inst_dir}}/bin/gunicorn\n
  -c {{mytardis_inst_dir}}/gunicorn_settings.py\n

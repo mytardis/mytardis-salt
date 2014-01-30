@@ -284,8 +284,7 @@ bin/django loaddata tardis/tardis_portal/fixtures/cc_licenses.json || true:
 celery-supervisor:
   file.managed:
     - name: /etc/supervisor/conf.d/celery.conf
-    - contents:
-        - "[program:celeryd]\n\
+    - contents: "[program:celeryd]\n\
 directory={{ mytardis_inst_dir }}\n\
 command={{ mytardis_inst_dir}}/bin/django celeryd --concurrency 5\n\
 user={{ pillar['mytardis_user'] }}\n\
