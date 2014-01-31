@@ -2,7 +2,7 @@
 rabbitmq-repo:
   pkgrepo.managed:
     - name: "deb http://www.rabbitmq.com/debian/ testing main"
-    - keyurl: "http://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
+    - key_url: "http://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
     - require_in:
       - pkg: rabbitmq-server
 {% endif %}
