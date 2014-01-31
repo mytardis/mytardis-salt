@@ -1,3 +1,12 @@
+{% if grains['os_family'] == 'Debian' %}
+rabbitmq-repo:
+  pkgrepo.managed:
+    - name: "deb http://www.rabbitmq.com/debian/ testing main"
+    - key_url: "http://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
+    - require_in:
+      - pkg: rabbitmq-server
+{% endif %}
+
 rabbitmq-server:
   pkg.installed: []
   service.running:
